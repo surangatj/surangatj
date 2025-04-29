@@ -4,7 +4,7 @@
 
 <div align="center" style="background-color: #0A2E3B; padding: 20px; border-radius: 10px; margin: 20px 0;">
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Kanit&weight=700&size=38&duration=3000&pause=500&color=00B4D8&center=true&vCenter=true&width=800&lines=Hi%2C+I'm+Suranga;A+passionate+Data+Engineer+%26+AI+Expert+from+Sweden)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Kanit&weight=700&size=38&duration=3000&pause=500&color=00B4D8&center=true&vCenter=true&width=800&lines=Hi%2C+I'm+Suranga;Data+Engineer+%26+AI+Expert+from+Sweden)](https://git.io/typing-svg)
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/surangan)
 [![Portfolio](https://img.shields.io/badge/Portfolio-000000?logo=About.me&logoColor=white)](https://suranga.xyz)

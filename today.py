@@ -8,6 +8,7 @@ Inspired by Andrew6rant/Andrew6rant. Requires:
   USER_NAME     - GitHub login (defaults to surangatj)
 """
 import datetime
+import html
 import json
 import os
 import re
@@ -166,11 +167,49 @@ def gather(my_id, repos):
     return my_commits, additions, deletions
 
 
+INFO_X = 390          # x of the right-hand text column
+ROW_WIDTH = 60        # every info row is padded to this many characters
+
+ROW_RE = re.compile(r'^<tspan x="' + str(INFO_X) + r'" y="\d+">.*</tspan>$')
+DOTS_RE = re.compile(r'(<tspan class="cc" id="\w+_dots"> )(\.*)( </tspan>)')
+TAG_RE = re.compile(r"</?tspan[^>]*>")
+
+
 def replace_id(svg, element_id, new_text):
     pattern = re.compile(r'(<tspan[^>]*id="' + re.escape(element_id) + r'"[^>]*>)[^<]*(</tspan>)')
     if not pattern.search(svg):
         print(f"  WARNING: id '{element_id}' not found in SVG", file=sys.stderr)
     return pattern.sub(lambda m: m.group(1) + new_text + m.group(2), svg)
+
+
+def visible_len(markup):
+    return len(html.unescape(TAG_RE.sub("", markup)))
+
+
+def rejustify(row):
+    """Grow/shrink a row's dot leaders so it stays exactly ROW_WIDTH characters.
+
+    Stat values change length over time (46 -> 100 repos); without this the
+    right-hand edge of the card drifts out of alignment.
+    """
+    runs = list(DOTS_RE.finditer(row))
+    delta = ROW_WIDTH - visible_len(row)
+    if not runs or delta == 0:
+        return row
+    share = [delta // len(runs)] * len(runs)
+    share[-1] += delta - sum(share)               # last run absorbs the remainder
+
+    out, cursor = "", 0
+    for run, d in zip(runs, share):
+        out += row[cursor:run.start()]
+        out += run.group(1) + "." * max(0, len(run.group(2)) + d) + run.group(3)
+        cursor = run.end()
+    out += row[cursor:]
+
+    if visible_len(out) > ROW_WIDTH:      # dot leaders exhausted; values outgrew the row
+        print(f"  WARNING: row exceeds {ROW_WIDTH} cols and may clip: "
+              f"{TAG_RE.sub('', out)[:80]}", file=sys.stderr)
+    return out
 
 
 def update_svgs(values):
@@ -179,6 +218,8 @@ def update_svgs(values):
             svg = f.read()
         for element_id, text in values.items():
             svg = replace_id(svg, element_id, text)
+        svg = "\n".join(rejustify(line) if ROW_RE.match(line) else line
+                        for line in svg.split("\n"))
         with open(path, "w", encoding="utf-8") as f:
             f.write(svg)
         print(f"updated {path}")
@@ -199,8 +240,8 @@ def main():
         "star_data": fmt(stars),
         "follower_data": fmt(followers),
         "loc_data": fmt(additions - deletions),
-        "loc_add": fmt(additions) + "++",
-        "loc_del": fmt(deletions) + "--",
+        "loc_add": fmt(additions),          # the '++' / '--' suffixes are static markup
+        "loc_del": fmt(deletions),
     })
 
 

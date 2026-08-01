@@ -1,0 +1,215 @@
+"""Rebuild dark_mode.svg / light_mode.svg — the neofetch-style profile card.
+
+Layout follows Andrew6rant/Andrew6rant: a rounded panel, a chunky ASCII
+portrait on the left at 16px, and a right column of dot-leader key/value
+rows grouped under section rules.
+
+Run this by hand whenever the card's text or portrait should change:
+
+    pip install pillow requests && python card.py
+
+It regenerates both SVGs from scratch, so any live stats currently in them
+are reset to the placeholders in info_rows(); run today.py afterwards to
+fill in real numbers. The daily GitHub Action only runs today.py, which
+edits values in place -- it never needs Pillow.
+"""
+import io
+import os
+
+import requests
+from PIL import Image, ImageOps, ImageEnhance, ImageFilter
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT_DIR = HERE
+AVATAR_URL = "https://github.com/surangatj.png?size=460"
+AVATAR_CACHE = os.path.join(HERE, "cache", "avatar.png")
+
+W, H = 985, 530
+ART_X, INFO_X = 15, 390
+Y0, DY = 32, 20
+COLS, ROWS = 36, 24
+WIDTH = 60                     # every info row is padded to this many columns
+
+RAMP = "@%#*+=;:,.` "
+WHITE_CUT = 0.86
+
+THEMES = {
+    "dark_mode.svg":  dict(bg="#161b22", fg="#c9d1d9", key="#ffa657", val="#a5d6ff",
+                           cc="#616e7f", add="#3fb950", dele="#f85149"),
+    "light_mode.svg": dict(bg="#f6f8fa", fg="#24292f", key="#953800", val="#0a3069",
+                           cc="#c2cfde", add="#1a7f37", dele="#cf222e"),
+}
+
+
+# ---------------------------------------------------------------- ascii art
+def avatar():
+    """The GitHub avatar, cached locally so repeat runs work offline."""
+    if not os.path.exists(AVATAR_CACHE):
+        r = requests.get(AVATAR_URL, timeout=30)
+        r.raise_for_status()
+        os.makedirs(os.path.dirname(AVATAR_CACHE), exist_ok=True)
+        Image.open(io.BytesIO(r.content)).convert("RGB").save(AVATAR_CACHE)
+        print("fetched", AVATAR_URL)
+    return Image.open(AVATAR_CACHE)
+
+
+def ascii_art(crop=(120, 30, 340, 300), contrast=1.2, edge=0.30):
+    im = avatar().convert("RGB").crop(crop)
+    px = im.load()
+    w, h = im.size
+    for y in range(h):                       # orange backdrop + white ring -> blank
+        for x in range(w):
+            r, g, b = px[x, y]
+            if r > 150 and r - b > 60 and g < r - 40:
+                px[x, y] = (255, 255, 255)
+
+    g = ImageOps.autocontrast(im.convert("L"), cutoff=1)
+    g = ImageEnhance.Contrast(g).enhance(contrast)
+    e = ImageOps.autocontrast(
+        g.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(3)), cutoff=2)
+
+    small, esmall = g.resize((COLS, ROWS), Image.LANCZOS).load(), \
+                    e.resize((COLS, ROWS), Image.LANCZOS).load()
+    rows = []
+    for y in range(ROWS):
+        line = ""
+        for x in range(COLS):
+            base = small[x, y] / 255.0
+            v = max(0.0, base - edge * (esmall[x, y] / 255.0))
+            line += " " if (base >= WHITE_CUT and v >= WHITE_CUT) \
+                    else RAMP[min(len(RAMP) - 1, int(v * len(RAMP)))]
+        rows.append(line.rstrip())
+    return rows
+
+
+# ------------------------------------------------------------------- markup
+def esc(s):
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def seg(text, cls=None, sid=None):
+    a = (f' class="{cls}"' if cls else "") + (f' id="{sid}"' if sid else "")
+    return f"<tspan{a}>{esc(text)}</tspan>" if a else esc(text)
+
+
+def kv(key, value, vid=None):
+    """'. Key: ....... value' padded to WIDTH columns."""
+    n = WIDTH - 5 - len(key) - len(value)
+    dots = " " + "." * max(1, n) + " "
+    return (seg(". ", "cc") + seg(key, "key") + ":"
+            + seg(dots, "cc", f"{vid}_dots" if vid else None)
+            + seg(value, "value", vid))
+
+
+def rule(label):
+    n = WIDTH - len(label) - 3
+    return esc(label) + "—" * max(1, n) + "-—-"
+
+
+def stats_repos(repos, contrib, stars):
+    """'. Repos: ... N {Contributed: N} | Stars: ... N'"""
+    fixed = 2 + 5 + 1 + 2 + 11 + 2 + len(contrib) + 4 + 5 + 1 + len(repos) + len(stars)
+    slack = WIDTH - fixed - 4          # 4 = the spaces bracketing both dot leaders
+    d1, d2 = max(1, slack // 2), max(1, slack - slack // 2)
+    return (seg(". ", "cc") + seg("Repos", "key") + ":"
+            + seg(" " + "." * d1 + " ", "cc", "repo_data_dots")
+            + seg(repos, "value", "repo_data")
+            + " {" + seg("Contributed", "key") + ": "
+            + seg(contrib, "value", "contrib_data") + "} | "
+            + seg("Stars", "key") + ":"
+            + seg(" " + "." * d2 + " ", "cc", "star_data_dots")
+            + seg(stars, "value", "star_data"))
+
+
+def stats_commits(commits, followers):
+    fixed = 2 + 7 + 1 + 3 + 9 + 1 + 2 + 2 + len(commits) + len(followers)
+    slack = WIDTH - fixed
+    d1, d2 = max(1, slack // 2), max(1, slack - slack // 2)
+    return (seg(". ", "cc") + seg("Commits", "key") + ":"
+            + seg(" " + "." * d1 + " ", "cc", "commit_data_dots")
+            + seg(commits, "value", "commit_data") + " | "
+            + seg("Followers", "key") + ":"
+            + seg(" " + "." * d2 + " ", "cc", "follower_data_dots")
+            + seg(followers, "value", "follower_data"))
+
+
+def stats_loc(loc, add, dele):
+    label = "Lines of Code on GitHub"
+    fixed = 2 + len(label) + 1 + 2 + len(loc) + 3 + len(add) + 2 + 2 + len(dele) + 4
+    dots = max(1, WIDTH - fixed)
+    return (seg(". ", "cc") + seg(label, "key") + ":"
+            + seg(" " + "." * dots + " ", "cc", "loc_data_dots")
+            + seg(loc, "value", "loc_data") + " ( "
+            + seg(add, "addColor", "loc_add") + seg("++", "addColor") + ", "
+            + seg(dele, "delColor", "loc_del") + seg("--", "delColor") + " )")
+
+
+def info_rows():
+    return [
+        rule("suranga@tj -"),
+        kv("OS", "macOS, iOS"),
+        kv("Uptime", "32 years, 6 months, 8 days", "age_data"),
+        kv("Host", "Knowit"),
+        kv("Kernel", "Data Engineer, AI Dev & Data Scientist"),
+        kv("IDE", "VSCode, Databricks, PyCharm"),
+        kv("Clouds", "Azure, AWS, Google Cloud, Huawei"),
+        seg(". ", "cc"),
+        kv("Languages.Programming", "Python, Spark, SQL, React"),
+        kv("Languages.Real", "Sinhala, English, Swedish"),
+        seg(". ", "cc"),
+        kv("Hobbies.Software", "iOS App Dev, Lightroom"),
+        kv("Hobbies.Hardware", "Bitcoin Mining"),
+        rule("- Contact -"),
+        kv("Email.Personal", "suranga4@gmail.com"),
+        kv("LinkedIn", "in/surangan"),
+        kv("GitHub", "surangatj"),
+        rule("- GitHub Stats -"),
+        stats_repos("46", "7", "1"),
+        stats_commits("2,558", "4"),
+        stats_loc("93,210", "220,364", "127,154"),
+    ]
+
+
+def render(theme):
+    art = ascii_art()
+    art_tspans = "\n".join(
+        f'<tspan x="{ART_X}" y="{Y0 + i * DY}">{esc(line)}</tspan>'
+        for i, line in enumerate(art))
+    info_tspans = "\n".join(
+        f'<tspan x="{INFO_X}" y="{Y0 + i * DY}">{row}</tspan>'
+        for i, row in enumerate(info_rows()))
+
+    return f"""<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" font-family="ConsolasFallback,Consolas,monospace" width="{W}px" height="{H}px" viewBox="0 0 {W} {H}" font-size="16px">
+<style>
+@font-face {{
+src: local('Consolas'), local('Consolas Bold');
+font-family: 'ConsolasFallback';
+font-display: swap;
+-webkit-size-adjust: 109%;
+size-adjust: 109%;
+}}
+.key {{fill: {theme['key']};}}
+.value {{fill: {theme['val']};}}
+.addColor {{fill: {theme['add']};}}
+.delColor {{fill: {theme['dele']};}}
+.cc {{fill: {theme['cc']};}}
+text, tspan {{white-space: pre;}}
+</style>
+<rect width="{W}px" height="{H}px" fill="{theme['bg']}" rx="15"/>
+<text x="{ART_X}" y="{Y0}" fill="{theme['fg']}" class="ascii">
+{art_tspans}
+</text>
+<text x="{INFO_X}" y="{Y0}" fill="{theme['fg']}">
+{info_tspans}
+</text>
+</svg>
+"""
+
+
+if __name__ == "__main__":
+    for fname, theme in THEMES.items():
+        path = os.path.join(OUT_DIR, fname)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(render(theme))
+        print("wrote", path)

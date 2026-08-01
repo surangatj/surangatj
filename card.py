@@ -8,13 +8,15 @@ Run this by hand whenever the card's text or portrait should change:
 
     pip install pillow requests && python card.py
 
-It regenerates both SVGs from scratch, so any live stats currently in them
-are reset to the placeholders in info_rows(); run today.py afterwards to
-fill in real numbers. The daily GitHub Action only runs today.py, which
-edits values in place -- it never needs Pillow.
+It rebuilds both SVGs from scratch but carries the live stat values across
+from the existing files, so a rebuild never resets numbers the daily job
+has already computed. The GitHub Action only runs today.py, which edits
+those values in place -- it never needs Pillow.
 """
+import html
 import io
 import os
+import re
 
 import requests
 from PIL import Image, ImageOps, ImageEnhance, ImageFilter
@@ -33,11 +35,25 @@ WIDTH = 60                     # every info row is padded to this many columns
 RAMP = "@%#*+=;:,.` "
 WHITE_CUT = 0.86
 
+# The wink. Row 6 of the portrait is the brow line, row 7 the eyes; the
+# viewer's-left eye sits at columns 10-13. Closing just that eye -- brow left
+# alone -- is what reads as a wink rather than a blink at this resolution.
+EYE_ROW, EYE_COL = 7, 10
+EYE_OPEN, EYE_SHUT = "=#%+", ".--."
+
 THEMES = {
     "dark_mode.svg":  dict(bg="#161b22", fg="#c9d1d9", key="#ffa657", val="#a5d6ff",
-                           cc="#616e7f", add="#3fb950", dele="#f85149"),
+                           cc="#616e7f", add="#3fb950", dele="#f85149",
+                           ansi=["#484f58", "#ff7b72", "#3fb950", "#d29922",
+                                 "#58a6ff", "#bc8cff", "#39c5cf", "#b1bac4"],
+                           bright=["#6e7681", "#ffa198", "#56d364", "#e3b341",
+                                   "#79c0ff", "#d2a8ff", "#56d4dd", "#f0f6fc"]),
     "light_mode.svg": dict(bg="#f6f8fa", fg="#24292f", key="#953800", val="#0a3069",
-                           cc="#c2cfde", add="#1a7f37", dele="#cf222e"),
+                           cc="#c2cfde", add="#1a7f37", dele="#cf222e",
+                           ansi=["#24292f", "#cf222e", "#1a7f37", "#9a6700",
+                                 "#0969da", "#8250df", "#1b7c83", "#6e7781"],
+                           bright=["#57606a", "#a40e26", "#2da44e", "#bf8700",
+                                   "#218bff", "#a475f9", "#3192aa", "#8c959f"]),
 }
 
 
@@ -106,6 +122,16 @@ def rule(label):
     return esc(label) + "—" * max(1, n) + "-—-"
 
 
+def color_blocks(palette):
+    """The swatch row real neofetch prints: 8 terminal colours, 3 cells each."""
+    return "  " + "".join(f'<tspan fill="{c}">███</tspan>' for c in palette)
+
+
+def prompt():
+    """A shell prompt with a blinking block cursor, as if neofetch just exited."""
+    return seg("suranga@tj", "key") + ":~$ " + seg("█", "cursor")
+
+
 def stats_repos(repos, contrib, stars):
     """'. Repos: ... N {Contributed: N} | Stars: ... N'"""
     fixed = 2 + 5 + 1 + 2 + 11 + 2 + len(contrib) + 4 + 5 + 1 + len(repos) + len(stars)
@@ -144,11 +170,34 @@ def stats_loc(loc, add, dele):
             + seg(dele, "delColor", "loc_del") + seg("--", "delColor") + " )")
 
 
-def info_rows():
+# Seed values, used only when building a card from nothing; a rebuild over an
+# existing card reuses whatever today.py last wrote (see live_values).
+SEED = {
+    "age_data": "32 years, 6 months, 8 days",
+    "repo_data": "46", "contrib_data": "3", "star_data": "1",
+    "commit_data": "2,561", "follower_data": "4",
+    "loc_data": "93,599", "loc_add": "220,766", "loc_del": "127,167",
+}
+
+
+def live_values(path):
+    """Stat values already in the card on disk, so rebuilding preserves them."""
+    v = dict(SEED)
+    if not os.path.exists(path):
+        return v
+    svg = open(path, encoding="utf-8").read()
+    for key in SEED:
+        m = re.search(r'id="%s"[^>]*>([^<]*)<' % re.escape(key), svg)
+        if m:
+            v[key] = html.unescape(m.group(1))
+    return v
+
+
+def info_rows(theme, v):
     return [
         rule("suranga@tj -"),
         kv("OS", "macOS, iOS"),
-        kv("Uptime", "32 years, 6 months, 8 days", "age_data"),
+        kv("Uptime", v["age_data"], "age_data"),
         kv("Host", "Knowit"),
         kv("Kernel", "Data Engineer, AI Dev & Data Scientist"),
         kv("IDE", "VSCode, Databricks, PyCharm"),
@@ -164,20 +213,50 @@ def info_rows():
         kv("LinkedIn", "in/surangan"),
         kv("GitHub", "surangatj"),
         rule("- GitHub Stats -"),
-        stats_repos("46", "7", "1"),
-        stats_commits("2,558", "4"),
-        stats_loc("93,210", "220,364", "127,154"),
+        stats_repos(v["repo_data"], v["contrib_data"], v["star_data"]),
+        stats_commits(v["commit_data"], v["follower_data"]),
+        stats_loc(v["loc_data"], v["loc_add"], v["loc_del"]),
+        seg(". ", "cc"),
+        color_blocks(theme["ansi"]),
+        color_blocks(theme["bright"]),
+        prompt(),
     ]
 
 
-def render(theme):
+def shut_eye(rows):
+    """rows[EYE_ROW] with the viewer's-left eye closed."""
+    row = rows[EYE_ROW]
+    found = row[EYE_COL:EYE_COL + len(EYE_OPEN)]
+    if found != EYE_OPEN:
+        raise SystemExit(
+            f"portrait shifted: expected {EYE_OPEN!r} at row {EYE_ROW} col {EYE_COL}, "
+            f"found {found!r}. Re-locate the eye before rebuilding.")
+    return row[:EYE_COL] + EYE_SHUT + row[EYE_COL + len(EYE_SHUT):]
+
+
+def render(theme, v):
     art = ascii_art()
-    art_tspans = "\n".join(
-        f'<tspan x="{ART_X}" y="{Y0 + i * DY}">{esc(line)}</tspan>'
-        for i, line in enumerate(art))
+
+    def art_text(indices, rows, cls):
+        tspans = "\n".join(
+            f'<tspan x="{ART_X}" y="{Y0 + i * DY}">{esc(rows[i])}</tspan>' for i in indices)
+        return (f'<text x="{ART_X}" y="{Y0}" fill="{theme["fg"]}" class="{cls}">'
+                f'\n{tspans}\n</text>')
+
+    # The eye row lives in its own <text> so only that one line is duplicated
+    # for the animation; everything else is drawn once.
+    still = [i for i in range(len(art)) if i != EYE_ROW]
+    winking = list(art)
+    winking[EYE_ROW] = shut_eye(art)
+    art_blocks = "\n".join([
+        art_text(still, art, "ascii"),
+        art_text([EYE_ROW], art, "ascii eye-open"),
+        art_text([EYE_ROW], winking, "ascii eye-shut"),
+    ])
+
     info_tspans = "\n".join(
         f'<tspan x="{INFO_X}" y="{Y0 + i * DY}">{row}</tspan>'
-        for i, row in enumerate(info_rows()))
+        for i, row in enumerate(info_rows(theme, v)))
 
     return f"""<?xml version='1.0' encoding='UTF-8'?>
 <svg xmlns="http://www.w3.org/2000/svg" font-family="ConsolasFallback,Consolas,monospace" width="{W}px" height="{H}px" viewBox="0 0 {W} {H}" font-size="16px">
@@ -195,11 +274,20 @@ size-adjust: 109%;
 .delColor {{fill: {theme['dele']};}}
 .cc {{fill: {theme['cc']};}}
 text, tspan {{white-space: pre;}}
+.eye-open {{animation: eye-open 6s infinite;}}
+.eye-shut {{opacity: 0; animation: eye-shut 6s infinite;}}
+.cursor {{fill: {theme['key']}; animation: blink 1.2s step-end infinite;}}
+@keyframes eye-open {{0%, 89% {{opacity: 1;}} 90%, 94% {{opacity: 0;}} 95%, 100% {{opacity: 1;}}}}
+@keyframes eye-shut {{0%, 89% {{opacity: 0;}} 90%, 94% {{opacity: 1;}} 95%, 100% {{opacity: 0;}}}}
+@keyframes blink {{0%, 50% {{opacity: 1;}} 51%, 100% {{opacity: 0;}}}}
+@media (prefers-reduced-motion: reduce) {{
+.eye-open {{animation: none; opacity: 1;}}
+.eye-shut {{animation: none; opacity: 0;}}
+.cursor {{animation: none; opacity: 1;}}
+}}
 </style>
 <rect width="{W}px" height="{H}px" fill="{theme['bg']}" rx="15"/>
-<text x="{ART_X}" y="{Y0}" fill="{theme['fg']}" class="ascii">
-{art_tspans}
-</text>
+{art_blocks}
 <text x="{INFO_X}" y="{Y0}" fill="{theme['fg']}">
 {info_tspans}
 </text>
@@ -211,5 +299,5 @@ if __name__ == "__main__":
     for fname, theme in THEMES.items():
         path = os.path.join(OUT_DIR, fname)
         with open(path, "w", encoding="utf-8") as f:
-            f.write(render(theme))
+            f.write(render(theme, live_values(path)))
         print("wrote", path)

@@ -1,0 +1,338 @@
+{
+  "H-One-Data-and-AI/cv-grader-frontend-v2": {
+    "additions": 0,
+    "branch_total": 2,
+    "commits": 0,
+    "deletions": 0
+  },
+  "H-One-Data-and-AI/poc-tenders-bot": {
+    "additions": 0,
+    "branch_total": 30,
+    "commits": 0,
+    "deletions": 0
+  },
+  "H-One-Data-and-AI/sagt-chatbot-poc": {
+    "additions": 0,
+    "branch_total": 2,
+    "commits": 0,
+    "deletions": 0
+  },
+  "H-One-Data-and-AI/sagt-sql-query-chatbot": {
+    "additions": 0,
+    "branch_total": 1,
+    "commits": 0,
+    "deletions": 0
+  },
+  "Hevb890/MAS-BE": {
+    "additions": 0,
+    "branch_total": 5,
+    "commits": 0,
+    "deletions": 0
+  },
+  "itzdamika/MAS-Admin": {
+    "additions": 0,
+    "branch_total": 1,
+    "commits": 0,
+    "deletions": 0
+  },
+  "itzdamika/gpt-chatbot": {
+    "additions": 0,
+    "branch_total": 131,
+    "commits": 0,
+    "deletions": 0
+  },
+  "itzdamika/mas-chat-frontend": {
+    "additions": 0,
+    "branch_total": 7,
+    "commits": 0,
+    "deletions": 0
+  },
+  "mehdikhan09/New-web-site": {
+    "additions": 11418,
+    "branch_total": 20,
+    "commits": 9,
+    "deletions": 113062
+  },
+  "nixx49/mas-backend-v1": {
+    "additions": 0,
+    "branch_total": 2,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/Australian-College": {
+    "additions": 1529,
+    "branch_total": 6,
+    "commits": 6,
+    "deletions": 591
+  },
+  "surangatj/Boot-Camp-Materials": {
+    "additions": 0,
+    "branch_total": 3,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/CV_Generator": {
+    "additions": 138275,
+    "branch_total": 21,
+    "commits": 21,
+    "deletions": 5153
+  },
+  "surangatj/ChatwithDB": {
+    "additions": 379,
+    "branch_total": 2,
+    "commits": 2,
+    "deletions": 0
+  },
+  "surangatj/Databricks-works": {
+    "additions": 0,
+    "branch_total": 42,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/DatabricksGenieBOT": {
+    "additions": 0,
+    "branch_total": 29,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/Haycarb-Annual-Report": {
+    "additions": 1378,
+    "branch_total": 5,
+    "commits": 5,
+    "deletions": 30
+  },
+  "surangatj/Hayleys_API_Project": {
+    "additions": 251,
+    "branch_total": 3,
+    "commits": 3,
+    "deletions": 5
+  },
+  "surangatj/Hayleys_Annual_Report_Demo": {
+    "additions": 2018,
+    "branch_total": 11,
+    "commits": 10,
+    "deletions": 177
+  },
+  "surangatj/Hydramini-Mismatches-Finding": {
+    "additions": 44,
+    "branch_total": 1,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/MAS-Admin": {
+    "additions": 33,
+    "branch_total": 2,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/MAS-BE": {
+    "additions": 33,
+    "branch_total": 3,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/MAS_Copilot_Demo": {
+    "additions": 128,
+    "branch_total": 2,
+    "commits": 2,
+    "deletions": 0
+  },
+  "surangatj/Resume_Analyzer_V2": {
+    "additions": 0,
+    "branch_total": 0,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/antilibrary": {
+    "additions": 0,
+    "branch_total": 18,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/avatar-chat-app": {
+    "additions": 0,
+    "branch_total": 0,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/azureml-examples": {
+    "additions": 0,
+    "branch_total": 306,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/cognitive-services-speech-sdk": {
+    "additions": 0,
+    "branch_total": 559,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/computer_vision_work": {
+    "additions": 2,
+    "branch_total": 1,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/cvranking_v2": {
+    "additions": 1,
+    "branch_total": 1,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/dabs-with-python-ws": {
+    "additions": 0,
+    "branch_total": 35,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/daily-activity-tracker": {
+    "additions": 2486,
+    "branch_total": 2436,
+    "commits": 2424,
+    "deletions": 13
+  },
+  "surangatj/databricks-dataops-course": {
+    "additions": 0,
+    "branch_total": 117,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/databricks-uc-browser": {
+    "additions": 0,
+    "branch_total": 12,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/dbt-works": {
+    "additions": 356,
+    "branch_total": 4,
+    "commits": 3,
+    "deletions": 1
+  },
+  "surangatj/dialog-ai-training": {
+    "additions": 0,
+    "branch_total": 500,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/dialogtraining-ai-agents": {
+    "additions": 0,
+    "branch_total": 386,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/email-complaint-analyzer": {
+    "additions": 8135,
+    "branch_total": 7,
+    "commits": 5,
+    "deletions": 4
+  },
+  "surangatj/gen-cv": {
+    "additions": 0,
+    "branch_total": 93,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/hayleysannualreportapi": {
+    "additions": 75,
+    "branch_total": 2,
+    "commits": 2,
+    "deletions": 0
+  },
+  "surangatj/hm_job_scraper": {
+    "additions": 1274,
+    "branch_total": 139,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/javascript-essential-training-2832077": {
+    "additions": 5,
+    "branch_total": 20,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/mas-backend-v1": {
+    "additions": 0,
+    "branch_total": 2,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/mas-chat-frontend": {
+    "additions": 1552,
+    "branch_total": 12,
+    "commits": 5,
+    "deletions": 2520
+  },
+  "surangatj/mcair-visa-app": {
+    "additions": 39973,
+    "branch_total": 52,
+    "commits": 23,
+    "deletions": 4058
+  },
+  "surangatj/mcp-snowflake-service": {
+    "additions": 0,
+    "branch_total": 22,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/nic_parser": {
+    "additions": 0,
+    "branch_total": 10,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/parsera": {
+    "additions": 0,
+    "branch_total": 11,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/react-work": {
+    "additions": 0,
+    "branch_total": 6,
+    "commits": 0,
+    "deletions": 0
+  },
+  "surangatj/scania_job_scraper": {
+    "additions": 2896,
+    "branch_total": 257,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/singeremail": {
+    "additions": 440,
+    "branch_total": 1,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/skills-copilot-codespaces-vscode": {
+    "additions": 752,
+    "branch_total": 2,
+    "commits": 1,
+    "deletions": 0
+  },
+  "surangatj/surangatj": {
+    "additions": 184,
+    "branch_total": 5,
+    "commits": 5,
+    "deletions": 37
+  },
+  "surangatj/suvini_job_scraper": {
+    "additions": 4540,
+    "branch_total": 313,
+    "commits": 17,
+    "deletions": 637
+  },
+  "surangatj/vidingehem_scraper": {
+    "additions": 1563,
+    "branch_total": 3,
+    "commits": 3,
+    "deletions": 720
+  },
+  "surangatj/webhost": {
+    "additions": 42,
+    "branch_total": 1,
+    "commits": 1,
+    "deletions": 0
+  }
+}

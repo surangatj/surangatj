@@ -10,6 +10,4 @@
 
 <!--
 Stats update daily via .github/workflows/update-stats.yml (today.py).
-ASCII portrait + card design generated from my headshot.
-Inspired by github.com/Andrew6rant/Andrew6rant.
 -->

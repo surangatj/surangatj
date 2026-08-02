@@ -26,10 +26,14 @@ OUT_DIR = HERE
 AVATAR_URL = "https://github.com/surangatj.png?size=460"
 AVATAR_CACHE = os.path.join(HERE, "cache", "avatar.png")
 
-W, H = 985, 530
+W, H = 985, 490
 ART_X, INFO_X = 15, 390
 Y0, DY = 32, 20
-COLS, ROWS = 36, 24
+COLS, ROWS = 36, 22            # rows actually drawn
+SAMPLE_ROWS = 24               # the portrait was tuned on a 24-row grid: keep
+                               # sampling there and drop the surplus rows, so
+                               # trimming crops the torso instead of squashing
+                               # the face into fewer cells
 WIDTH = 60                     # every info row is padded to this many columns
 
 RAMP = "@%#*+=;:,.` "
@@ -76,10 +80,10 @@ def ascii_art(crop=(120, 30, 340, 300), contrast=1.2, edge=0.30):
     e = ImageOps.autocontrast(
         g.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(3)), cutoff=2)
 
-    small, esmall = g.resize((COLS, ROWS), Image.LANCZOS).load(), \
-                    e.resize((COLS, ROWS), Image.LANCZOS).load()
+    small, esmall = g.resize((COLS, SAMPLE_ROWS), Image.LANCZOS).load(), \
+                    e.resize((COLS, SAMPLE_ROWS), Image.LANCZOS).load()
     rows = []
-    for y in range(ROWS):
+    for y in range(SAMPLE_ROWS):
         line = ""
         for x in range(COLS):
             base = small[x, y] / 255.0
@@ -87,7 +91,7 @@ def ascii_art(crop=(120, 30, 340, 300), contrast=1.2, edge=0.30):
             line += " " if (base >= WHITE_CUT and v >= WHITE_CUT) \
                     else RAMP[min(len(RAMP) - 1, int(v * len(RAMP)))]
         rows.append(line.rstrip())
-    return rows
+    return rows[:ROWS]
 
 
 # ------------------------------------------------------------------- markup

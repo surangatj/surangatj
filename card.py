@@ -35,25 +35,17 @@ WIDTH = 60                     # every info row is padded to this many columns
 RAMP = "@%#*+=;:,.` "
 WHITE_CUT = 0.86
 
-# The wink. Row 6 of the portrait is the brow line, row 7 the eyes; the
-# viewer's-left eye sits at columns 10-13. Closing just that eye -- brow left
-# alone -- is what reads as a wink rather than a blink at this resolution.
-EYE_ROW, EYE_COL = 7, 10
-EYE_OPEN, EYE_SHUT = "=#%+", ".--."
+# The wink. Row 6 of the portrait is the brow line, row 7 the eyes; the eye on
+# the right as you look at the card sits at columns 17-20. Closing just that eye
+# -- brow left alone -- is what reads as a wink rather than a blink here.
+EYE_ROW, EYE_COL = 7, 17
+EYE_OPEN, EYE_SHUT = "=*#*", ".--."
 
 THEMES = {
     "dark_mode.svg":  dict(bg="#161b22", fg="#c9d1d9", key="#ffa657", val="#a5d6ff",
-                           cc="#616e7f", add="#3fb950", dele="#f85149",
-                           ansi=["#484f58", "#ff7b72", "#3fb950", "#d29922",
-                                 "#58a6ff", "#bc8cff", "#39c5cf", "#b1bac4"],
-                           bright=["#6e7681", "#ffa198", "#56d364", "#e3b341",
-                                   "#79c0ff", "#d2a8ff", "#56d4dd", "#f0f6fc"]),
+                           cc="#616e7f", add="#3fb950", dele="#f85149"),
     "light_mode.svg": dict(bg="#f6f8fa", fg="#24292f", key="#953800", val="#0a3069",
-                           cc="#c2cfde", add="#1a7f37", dele="#cf222e",
-                           ansi=["#24292f", "#cf222e", "#1a7f37", "#9a6700",
-                                 "#0969da", "#8250df", "#1b7c83", "#6e7781"],
-                           bright=["#57606a", "#a40e26", "#2da44e", "#bf8700",
-                                   "#218bff", "#a475f9", "#3192aa", "#8c959f"]),
+                           cc="#c2cfde", add="#1a7f37", dele="#cf222e"),
 }
 
 
@@ -120,16 +112,6 @@ def kv(key, value, vid=None):
 def rule(label):
     n = WIDTH - len(label) - 3
     return esc(label) + "—" * max(1, n) + "-—-"
-
-
-def color_blocks(palette):
-    """The swatch row real neofetch prints: 8 terminal colours, 3 cells each."""
-    return "  " + "".join(f'<tspan fill="{c}">███</tspan>' for c in palette)
-
-
-def prompt():
-    """A shell prompt with a blinking block cursor, as if neofetch just exited."""
-    return seg("suranga@tj", "key") + ":~$ " + seg("█", "cursor")
 
 
 def stats_repos(repos, contrib, stars):
@@ -212,14 +194,11 @@ def info_rows(theme, v):
         kv("Email.Personal", "suranga4@gmail.com"),
         kv("LinkedIn", "in/surangan"),
         kv("GitHub", "surangatj"),
+        kv("Website", "suranga.xyz"),
         rule("- GitHub Stats -"),
         stats_repos(v["repo_data"], v["contrib_data"], v["star_data"]),
         stats_commits(v["commit_data"], v["follower_data"]),
         stats_loc(v["loc_data"], v["loc_add"], v["loc_del"]),
-        seg(". ", "cc"),
-        color_blocks(theme["ansi"]),
-        color_blocks(theme["bright"]),
-        prompt(),
     ]
 
 
@@ -276,14 +255,11 @@ size-adjust: 109%;
 text, tspan {{white-space: pre;}}
 .eye-open {{animation: eye-open 6s infinite;}}
 .eye-shut {{opacity: 0; animation: eye-shut 6s infinite;}}
-.cursor {{fill: {theme['key']}; animation: blink 1.2s step-end infinite;}}
 @keyframes eye-open {{0%, 89% {{opacity: 1;}} 90%, 94% {{opacity: 0;}} 95%, 100% {{opacity: 1;}}}}
 @keyframes eye-shut {{0%, 89% {{opacity: 0;}} 90%, 94% {{opacity: 1;}} 95%, 100% {{opacity: 0;}}}}
-@keyframes blink {{0%, 50% {{opacity: 1;}} 51%, 100% {{opacity: 0;}}}}
 @media (prefers-reduced-motion: reduce) {{
 .eye-open {{animation: none; opacity: 1;}}
 .eye-shut {{animation: none; opacity: 0;}}
-.cursor {{animation: none; opacity: 1;}}
 }}
 </style>
 <rect width="{W}px" height="{H}px" fill="{theme['bg']}" rx="15"/>
@@ -298,6 +274,7 @@ text, tspan {{white-space: pre;}}
 if __name__ == "__main__":
     for fname, theme in THEMES.items():
         path = os.path.join(OUT_DIR, fname)
+        svg = render(theme, live_values(path))   # read stats before truncating the file
         with open(path, "w", encoding="utf-8") as f:
-            f.write(render(theme, live_values(path)))
+            f.write(svg)
         print("wrote", path)

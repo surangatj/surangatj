@@ -1,25 +1,7 @@
 {
-  "H-One-Data-and-AI/cv-grader-frontend-v2": {
-    "additions": 0,
-    "branch_total": 2,
-    "commits": 0,
-    "deletions": 0
-  },
   "H-One-Data-and-AI/poc-tenders-bot": {
     "additions": 0,
     "branch_total": 30,
-    "commits": 0,
-    "deletions": 0
-  },
-  "H-One-Data-and-AI/sagt-chatbot-poc": {
-    "additions": 0,
-    "branch_total": 3,
-    "commits": 0,
-    "deletions": 0
-  },
-  "H-One-Data-and-AI/sagt-sql-query-chatbot": {
-    "additions": 0,
-    "branch_total": 1,
     "commits": 0,
     "deletions": 0
   },
@@ -186,9 +168,9 @@
     "deletions": 0
   },
   "surangatj/daily-activity-tracker": {
-    "additions": 2565,
-    "branch_total": 2515,
-    "commits": 2503,
+    "additions": 2575,
+    "branch_total": 2525,
+    "commits": 2513,
     "deletions": 13
   },
   "surangatj/databricks-dataops-course": {
@@ -301,7 +283,7 @@
   },
   "surangatj/scania_job_scraper": {
     "additions": 2896,
-    "branch_total": 270,
+    "branch_total": 271,
     "commits": 1,
     "deletions": 0
   },
@@ -319,7 +301,7 @@
   },
   "surangatj/surangatj": {
     "additions": 1376,
-    "branch_total": 28,
+    "branch_total": 29,
     "commits": 14,
     "deletions": 289
   },

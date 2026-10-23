@@ -1,4 +1,10 @@
 {
+  "H-One-Data-and-AI/TLC-trip-bulk-pickme": {
+    "additions": 0,
+    "branch_total": 2,
+    "commits": 0,
+    "deletions": 0
+  },
   "H-One-Data-and-AI/poc-tenders-bot": {
     "additions": 0,
     "branch_total": 30,
@@ -198,9 +204,9 @@
     "deletions": 0
   },
   "surangatj/daily-activity-tracker": {
-    "additions": 2990,
-    "branch_total": 2940,
-    "commits": 2928,
+    "additions": 2996,
+    "branch_total": 2946,
+    "commits": 2934,
     "deletions": 13
   },
   "surangatj/databricks-dataops-course": {
@@ -238,6 +244,12 @@
     "branch_total": 7,
     "commits": 5,
     "deletions": 4
+  },
+  "surangatj/foundry-agents-workshop": {
+    "additions": 2524,
+    "branch_total": 3,
+    "commits": 3,
+    "deletions": 10
   },
   "surangatj/gen-cv": {
     "additions": 0,
@@ -337,7 +349,7 @@
   },
   "surangatj/surangatj": {
     "additions": 1376,
-    "branch_total": 97,
+    "branch_total": 98,
     "commits": 14,
     "deletions": 289
   },
@@ -349,7 +361,7 @@
   },
   "surangatj/suvini_job_scraper": {
     "additions": 8311,
-    "branch_total": 722,
+    "branch_total": 726,
     "commits": 22,
     "deletions": 656
   },

@@ -56,7 +56,7 @@ text, tspan {white-space: pre;}
 <text x="390" y="32" fill="#24292f">
 <tspan x="390" y="32">suranga@tj -—————————————————————————————————————————————-—-</tspan>
 <tspan x="390" y="52"><tspan class="cc">. </tspan><tspan class="key">OS</tspan>:<tspan class="cc"> ........................................... </tspan><tspan class="value">macOS, iOS</tspan></tspan>
-<tspan x="390" y="72"><tspan class="cc">. </tspan><tspan class="key">Uptime</tspan>:<tspan class="cc" id="age_data_dots"> ....................... </tspan><tspan class="value" id="age_data">32 years, 9 months, 0 days</tspan></tspan>
+<tspan x="390" y="72"><tspan class="cc">. </tspan><tspan class="key">Uptime</tspan>:<tspan class="cc" id="age_data_dots"> ........................ </tspan><tspan class="value" id="age_data">32 years, 9 months, 1 day</tspan></tspan>
 <tspan x="390" y="92"><tspan class="cc">. </tspan><tspan class="key">Host</tspan>:<tspan class="cc"> ............................................. </tspan><tspan class="value">Knowit</tspan></tspan>
 <tspan x="390" y="112"><tspan class="cc">. </tspan><tspan class="key">Kernel</tspan>:<tspan class="cc"> ........... </tspan><tspan class="value">Data Engineer, AI Dev &amp; Data Scientist</tspan></tspan>
 <tspan x="390" y="132"><tspan class="cc">. </tspan><tspan class="key">IDE</tspan>:<tspan class="cc"> ......................... </tspan><tspan class="value">VSCode, Databricks, PyCharm</tspan></tspan>

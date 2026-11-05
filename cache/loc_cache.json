@@ -13,7 +13,7 @@
   },
   "aros-kapital/aroskapital-adf-pipelines": {
     "additions": 1372,
-    "branch_total": 820,
+    "branch_total": 835,
     "commits": 22,
     "deletions": 51
   },
@@ -34,6 +34,12 @@
     "branch_total": 6,
     "commits": 0,
     "deletions": 0
+  },
+  "aros-kapital/databricks-cicd-workshop": {
+    "additions": 525,
+    "branch_total": 5,
+    "commits": 5,
+    "deletions": 3
   },
   "itzdamika/MAS-Admin": {
     "additions": 0,
@@ -198,9 +204,9 @@
     "deletions": 0
   },
   "surangatj/daily-activity-tracker": {
-    "additions": 3023,
-    "branch_total": 2973,
-    "commits": 2961,
+    "additions": 3028,
+    "branch_total": 2978,
+    "commits": 2966,
     "deletions": 13
   },
   "surangatj/databricks-dataops-course": {
@@ -349,7 +355,7 @@
   },
   "surangatj/surangatj": {
     "additions": 1376,
-    "branch_total": 109,
+    "branch_total": 110,
     "commits": 14,
     "deletions": 289
   },
@@ -361,7 +367,7 @@
   },
   "surangatj/suvini_job_scraper": {
     "additions": 8473,
-    "branch_total": 742,
+    "branch_total": 746,
     "commits": 26,
     "deletions": 726
   },
